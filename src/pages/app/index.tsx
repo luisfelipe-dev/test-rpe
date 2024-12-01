@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { BiLogoTailwindCss, BiLogoTypescript } from 'react-icons/bi'
 import { FaReact } from 'react-icons/fa'
@@ -30,10 +30,73 @@ module.exports = {
 };
 `
 
+interface Section {
+  id: string
+  title: string
+}
+
+const sections: Section[] = [
+  { id: 'section1', title: '1' },
+  { id: 'section2', title: '2' },
+  { id: 'section3', title: '3' },
+  { id: 'section4', title: '4' },
+  { id: 'section5', title: '5' },
+  { id: 'section6', title: '6' },
+  { id: 'section7', title: '7' },
+  { id: 'section8', title: '8' },
+]
+
 const WrapperIndex: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<string | null>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id)
+          }
+        })
+      },
+      { root: null, rootMargin: '0px', threshold: 0.6 }, // 60% visibilidade
+    )
+
+    const sectionElements: HTMLElement[] = sections
+      .map((section) => document.getElementById(section.id))
+      .filter((el): el is HTMLElement => el !== null)
+
+    sectionElements.forEach((el) => observer.observe(el))
+
+    return () => observer.disconnect()
+  }, [])
+
+  const handleClick = (id: string) => {
+    const section = document.getElementById(id)
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <>
       <Helmet title="RPE - DESAFIO TÉCNICO" />
+
+      <div className="fixed bottom-0 left-0 z-50 w-full bg-gray-800 text-white">
+        <ul className="flex justify-around py-2">
+          {sections.map((section) => (
+            <li
+              key={section.id}
+              className={`cursor-pointer px-4 py-2 ${
+                activeSection === section.id ? 'bg-blue-500 text-white' : ''
+              }`}
+              onClick={() => handleClick(section.id)}
+            >
+              {section.title}
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <ContainerGrid className="bg-bg-main mt-16">
         <div className="mx-auto mb-6 flex w-full max-w-2xl flex-wrap items-start">
           <div className="mb-4 w-full">
@@ -45,99 +108,100 @@ const WrapperIndex: React.FC = () => {
           </div>
 
           <div className="w-full">
-            <h2 className="mb-3 text-xl font-bold text-blue-600">
-              1. Arquitetura de Front-end:
-            </h2>
+            <div key={'section1'} id={'section1'}>
+              <h2 className="mb-3 text-xl font-bold text-blue-600">
+                1. Arquitetura de Front-end:
+              </h2>
 
-            <p className="mb-3 text-orange-600">Stack:</p>
+              <p className="mb-3 text-orange-600">Stack:</p>
 
-            <ul>
-              <li className="mb-5 flex flex-col">
-                <strong className="flex items-center gap-2 text-blue-500">
-                  <FaReact />
-                  React:
-                </strong>
-                Por ser um framework eficiente para desenvolvimento de
-                interfaces de usuário dinâmicas.
-              </li>
-              <li className="mb-5 flex flex-col">
-                <strong className="flex items-center gap-2 text-blue-500">
-                  <BiLogoTypescript />
-                  TypeScript:
-                </strong>
-                Para maior segurança no código e manutenção.
-              </li>
-              <li className="mb-5 flex flex-col">
-                <strong className="flex items-center gap-2 text-blue-500">
-                  <TbBrandVite />
-                  Vite:
-                </strong>
-                Para um ambiente de desenvolvimento rápido.
-              </li>
-              <li className="mb-5 flex flex-col">
-                <strong className="flex items-center gap-2 text-blue-500">
-                  <RiNextjsLine />
-                  NextJS:
-                </strong>
-                Caso nosso produto precise de um SEO, NextJS é a escolha.
-              </li>
-              <li className="mb-5 flex flex-col">
-                <strong className="flex items-center gap-2 text-blue-500">
-                  <BiLogoTailwindCss />
-                  Tailwind CSS:
-                </strong>
-                Para estilização consistente e flexível
-              </li>
-              <li className="mb-5 flex flex-col">
-                <strong className="flex items-center gap-2 text-blue-500">
-                  <SiReactquery />
-                  React Query:
-                </strong>
-                Para gerenciar o estado assíncrono e caching.
-              </li>
-              <li className="mb-5 flex flex-col">
-                <strong className="flex items-center gap-2 text-blue-500">
-                  <SiJest />
-                  Jest + Testing Library:
-                </strong>
-                Para garantir a qualidade do código.
-              </li>
-              <li className="mb-5 flex flex-col">
-                <strong className="flex items-center gap-2 text-blue-500">
-                  <GrDeploy />
-                  CI/CD:
-                </strong>
-                Para deploy automatizado.
-              </li>
-            </ul>
+              <ul>
+                <li className="mb-5 flex flex-col">
+                  <strong className="flex items-center gap-2 text-blue-500">
+                    <FaReact />
+                    React:
+                  </strong>
+                  Por ser um framework eficiente para desenvolvimento de
+                  interfaces de usuário dinâmicas.
+                </li>
+                <li className="mb-5 flex flex-col">
+                  <strong className="flex items-center gap-2 text-blue-500">
+                    <BiLogoTypescript />
+                    TypeScript:
+                  </strong>
+                  Para maior segurança no código e manutenção.
+                </li>
+                <li className="mb-5 flex flex-col">
+                  <strong className="flex items-center gap-2 text-blue-500">
+                    <TbBrandVite />
+                    Vite:
+                  </strong>
+                  Para um ambiente de desenvolvimento rápido.
+                </li>
+                <li className="mb-5 flex flex-col">
+                  <strong className="flex items-center gap-2 text-blue-500">
+                    <RiNextjsLine />
+                    NextJS:
+                  </strong>
+                  Caso nosso produto precise de um SEO, NextJS é a escolha.
+                </li>
+                <li className="mb-5 flex flex-col">
+                  <strong className="flex items-center gap-2 text-blue-500">
+                    <BiLogoTailwindCss />
+                    Tailwind CSS:
+                  </strong>
+                  Para estilização consistente e flexível
+                </li>
+                <li className="mb-5 flex flex-col">
+                  <strong className="flex items-center gap-2 text-blue-500">
+                    <SiReactquery />
+                    React Query:
+                  </strong>
+                  Para gerenciar o estado assíncrono e caching.
+                </li>
+                <li className="mb-5 flex flex-col">
+                  <strong className="flex items-center gap-2 text-blue-500">
+                    <SiJest />
+                    Jest + Testing Library:
+                  </strong>
+                  Para garantir a qualidade do código.
+                </li>
+                <li className="mb-5 flex flex-col">
+                  <strong className="flex items-center gap-2 text-blue-500">
+                    <GrDeploy />
+                    CI/CD:
+                  </strong>
+                  Para deploy automatizado.
+                </li>
+              </ul>
 
-            <Separator className="my-4" />
+              <Separator className="my-4" />
 
-            <p className="mb-3 text-orange-600">Estrutura do Projeto:</p>
+              <p className="mb-3 text-orange-600">Estrutura do Projeto:</p>
 
-            <img
-              src="/images/arquitetura.png"
-              alt="Estrutura do Projeto"
-              className="mb-6 h-auto max-w-full"
-            />
+              <img
+                src="/images/arquitetura.png"
+                alt="Estrutura do Projeto"
+                className="mb-6 h-auto max-w-full"
+              />
 
-            <Separator className="my-4" />
+              <Separator className="my-4" />
 
-            <p className="mb-3 text-orange-600">Diagrama:</p>
-            <p className="mb-3 text-orange-600">
-              Fluxo de Arquitetura de Chamadas API e Estado:
-            </p>
+              <p className="mb-3 text-orange-600">Diagrama:</p>
+              <p className="mb-3 text-orange-600">
+                Fluxo de Arquitetura de Chamadas API e Estado:
+              </p>
 
-            <img
-              src="/images/fluxo-api.png"
-              alt="Fluxo de Arquitetura de Chamadas API e Estado"
-              className="mb-6 h-auto max-w-full"
-            />
+              <img
+                src="/images/fluxo-api.png"
+                alt="Fluxo de Arquitetura de Chamadas API e Estado"
+                className="mb-6 h-auto max-w-full"
+              />
+            </div>
           </div>
-
           <Separator className="my-4" />
 
-          <div className="mb-6 mt-6 w-full">
+          <div className="mb-6 mt-6 w-full" id="section2">
             <h2 className="mb-3 text-xl font-bold text-blue-600">
               2. Escalabilidade e Desempenho:
             </h2>
@@ -178,7 +242,7 @@ const WrapperIndex: React.FC = () => {
 
           <Separator className="my-4" />
 
-          <div className="mb-6 mt-6 w-full">
+          <div className="mb-6 mt-6 w-full" id="section3">
             <h2 className="mb-3 text-xl font-bold text-blue-600">
               3. Manutenção e Evolução de Projetos:
             </h2>
@@ -220,7 +284,7 @@ const WrapperIndex: React.FC = () => {
 
           <Separator className="my-4" />
 
-          <div className="mb-6 mt-6 w-full">
+          <div className="mb-6 mt-6 w-full" id="section4">
             <h2 className="mb-3 text-xl font-bold text-blue-600">
               4. Integração com Back-end e APIs:
             </h2>
@@ -269,7 +333,7 @@ const WrapperIndex: React.FC = () => {
 
           <Separator className="my-4" />
 
-          <div className="mb-6 mt-6 w-full">
+          <div className="mb-6 mt-6 w-full" id="section5">
             <h2 className="mb-3 text-xl font-bold text-blue-600">
               5. Design e UX
             </h2>
@@ -317,6 +381,111 @@ const WrapperIndex: React.FC = () => {
               alt="Implementação de um Design System"
               className="mb-6 h-auto max-w-full"
             />
+          </div>
+
+          <Separator className="my-4" />
+
+          <div className="mb-6 mt-6 w-full" id="section6">
+            <h2 className="mb-3 text-xl font-bold text-blue-600">
+              6. Testes e Qualidade de Código:
+            </h2>
+
+            <p className="mb-3 text-orange-600">Pipeline CI/CD:</p>
+            <p className="mb-3 text-orange-600">Etapas de pipeline:</p>
+
+            <ul className="mb-3">
+              <li>
+                <strong>Linting:</strong> ESLint e Prettier.
+              </li>
+              <li>
+                <strong>Testes:</strong> Rodar unitários (Jest), integração
+                (Testing Library), e end-to-end (Cypress).
+              </li>
+              <li>
+                <strong>Build e Deploy:</strong> Deploy contínuo com Netlify ou
+                Vercel.
+              </li>
+            </ul>
+
+            <p className="mb-3 text-orange-600">Garantia de Eficiência:</p>
+
+            <ul className="mb-3">
+              <li>
+                Dividir os testes em suites paralelas para otimizar tempo.
+              </li>
+            </ul>
+
+            <Separator className="my-4" />
+
+            <p className="mb-3 mt-3 text-orange-600">Diagrama:</p>
+            <p className="mb-3 mt-3 text-orange-600">Pipeline CI/CD:</p>
+
+            <img
+              src="/images/flux-teste.png"
+              alt="Pipeline CI/CD"
+              className="mb-6 h-auto max-w-full"
+            />
+          </div>
+
+          <Separator className="my-4" />
+
+          <div className="mb-6 mt-6 w-full" id="section7">
+            <h2 className="mb-3 text-xl font-bold text-blue-600">
+              7. Adoção de Novas Tecnologias:
+            </h2>
+
+            <p className="mb-3 text-orange-600">Plano de Avaliação:</p>
+
+            <ul className="mb-3">
+              <li>
+                <strong>Critérios:</strong> Performance, curva de aprendizado,
+                compatibilidade com o projeto atual.
+              </li>
+            </ul>
+
+            <p className="mb-3 text-orange-600">Prova de Conceito (PoC):</p>
+
+            <ul className="mb-3">
+              <li>
+                1 - Implementar um módulo específico com a nova tecnologia.
+              </li>
+              <li>
+                2 - Avaliar resultados e impacto no time de desenvolvimento.
+              </li>
+            </ul>
+          </div>
+
+          <Separator className="my-4" />
+
+          <div className="mb-16 mt-6 w-full" id="section8">
+            <h2 className="mb-3 text-xl font-bold text-blue-600">
+              8. Colaboração e Mentoria:
+            </h2>
+
+            <p className="mb-3 text-orange-600">Práticas:</p>
+
+            <ul className="mb-3">
+              <li>
+                <strong>Alinhamento:</strong> Realizar daily meetings e definir
+                objetivos claros no Sprint Planning.
+              </li>
+            </ul>
+
+            <p className="mb-3 text-orange-600">Troca de Conhecimento:</p>
+
+            <ul className="mb-3">
+              <li>Pair Programming.</li>
+              <li>Code Reviews detalhados.</li>
+              <li>Workshops internos.</li>
+            </ul>
+
+            <p className="mb-3 text-orange-600">Mentoria:</p>
+
+            <ul>
+              <li>
+                Criar um plano de desenvolvimento individual para cada membro.
+              </li>
+            </ul>
           </div>
         </div>
       </ContainerGrid>
